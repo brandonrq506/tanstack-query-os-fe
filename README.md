@@ -51,3 +51,17 @@ VITE_API_URL = "http://127.0.0.1:3000"
 npm install
 npm run dev
 ```
+
+## Backend Setup (Optional)
+
+If you're not attending the sessions live, you can clone and run the backend locally:
+
+```bash
+git clone https://github.com/brandonrq506/tanstack-query-os-be.git
+cd tanstack-query-os-be
+bundle install
+rails db:setup
+rails s
+```
+
+For more details, refer to the [Tanstack Query Open Space Backend repository](https://github.com/brandonrq506/Tanstack-Query-OS-BE.git)
