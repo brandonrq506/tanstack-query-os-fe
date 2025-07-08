@@ -9,8 +9,9 @@ export const Header = () => {
           name="search"
           type="search"
           placeholder="Search"
+          autoComplete="off"
           aria-label="Search"
-          className="col-start-1 row-start-1 block size-full bg-white pl-8 text-base text-gray-900 outline-hidden placeholder:text-gray-400 sm:text-sm/6"
+          className="col-start-1 row-start-1 block size-full border-0 bg-white pl-8 text-base text-gray-900 outline-hidden placeholder:text-gray-400 sm:text-sm/6"
         />
         <MagnifyingGlassIcon
           aria-hidden="true"
