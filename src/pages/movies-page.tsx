@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 import { Link } from "react-router";
-import { Loading } from "@/components/core";
 import { MovieCard } from "@/features/movies/components";
 import type { MoviePreview } from "@/features/movies/types/movie-preview";
 import { PageHeader } from "@/components/layout";
@@ -12,26 +11,12 @@ export const MoviesPage = () => {
 
   useEffect(() => {
     const fetchMovies = async () => {
-      try {
-        const data = await getMovies();
-        setMovies(data);
-      } catch (error) {
-        console.error("Error fetching movies:", error);
-      }
+      const data = await getMovies();
+      setMovies(data);
     };
 
     fetchMovies();
   }, []);
-
-  if (movies.length === 0) {
-    return (
-      <div>
-        <PageHeader title="Explore our movie collection" />
-        <br />
-        <Loading sizeStyles="size-16" className="m-auto" />
-      </div>
-    );
-  }
 
   return (
     <div>
