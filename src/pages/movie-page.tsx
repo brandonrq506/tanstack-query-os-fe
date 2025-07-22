@@ -1,25 +1,39 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
+import { Loading } from "@/components/core";
 import { MovieDescription } from "@/features/movies/components";
-import type { MovieModel } from "@/features/movies/types/movie-model";
 import { getMovie } from "@/features/movies/api/axios/getMovie";
+import { useQuery } from "@tanstack/react-query";
 
 export const MoviePage = () => {
   const { movieId } = useParams();
-  const [movie, setMovie] = useState<MovieModel | null>(null);
 
-  useEffect(() => {
-    const fetchMovie = async () => {
-      if (!movieId) return;
-      const data = await getMovie(Number(movieId));
-      setMovie(data);
-    };
+  const {
+    isPending,
+    isError,
+    data: movie,
+  } = useQuery({
+    queryKey: ["movie", movieId],
+    queryFn: ({ signal }) => getMovie({ movieId: Number(movieId), signal }),
+    enabled: Boolean(movieId),
+  });
 
-    fetchMovie();
-  }, [movieId]);
+  if (isPending) return <Loading sizeStyles="size-10" className="mx-auto" />;
 
-  if (!movie) return null;
+  if (isError) {
+    return (
+      <div className="flex min-h-[200px] items-center justify-center">
+        <p className="text-red-500">Error loading movie. Please try again.</p>
+      </div>
+    );
+  }
+
+  if (!movie)
+    return (
+      <div className="flex min-h-[200px] items-center justify-center">
+        <p>Movie not found.</p>
+      </div>
+    );
 
   return (
     <div className="flex flex-col gap-4 xl:flex-row">
