@@ -1,16 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMovies } from "@/features/movies/api/tanstack/useMovies";
 
 import { Link } from "react-router";
 import { Loading } from "@/components/core";
 import { MovieCard } from "@/features/movies/components";
 import { PageHeader } from "@/components/layout";
-import { getMovies } from "@/features/movies/api/axios/getMovies";
 
 export const MoviesPage = () => {
-  const { isPending, isError, data } = useQuery({
-    queryKey: ["movies"],
-    queryFn: ({ signal }) => getMovies({ signal }),
-  });
+  const { isPending, isError, data } = useMovies();
 
   if (isPending) return <Loading sizeStyles="size-10" className="mx-auto" />;
 

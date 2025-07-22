@@ -1,9 +1,8 @@
+import { useMovie } from "@/features/movies/api/tanstack/useMovie";
 import { useParams } from "react-router";
 
 import { Loading } from "@/components/core";
 import { MovieDescription } from "@/features/movies/components";
-import { getMovie } from "@/features/movies/api/axios/getMovie";
-import { useQuery } from "@tanstack/react-query";
 
 export const MoviePage = () => {
   const { movieId } = useParams();
@@ -12,18 +11,16 @@ export const MoviePage = () => {
     isPending,
     isError,
     data: movie,
-  } = useQuery({
-    queryKey: ["movie", movieId],
-    queryFn: ({ signal }) => getMovie({ movieId: Number(movieId), signal }),
-    enabled: Boolean(movieId),
-  });
+    refetch,
+  } = useMovie(Number(movieId));
 
   if (isPending) return <Loading sizeStyles="size-10" className="mx-auto" />;
 
   if (isError) {
     return (
-      <div className="flex min-h-[200px] items-center justify-center">
+      <div className="flex min-h-[200px] items-center justify-center gap-2">
         <p className="text-red-500">Error loading movie. Please try again.</p>
+        <button onClick={() => refetch()}>Retry</button>
       </div>
     );
   }
