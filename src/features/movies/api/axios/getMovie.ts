@@ -1,9 +1,14 @@
 import { MOVIES_ENDPOINT, apiV1 } from "@/libs/axios";
 import type { MovieModel } from "../../types/movie-model";
 
-export const getMovie = async (id: number) => {
-  const URL = `${MOVIES_ENDPOINT}/${id}`;
+interface Props {
+  movieId: number;
+  signal?: AbortSignal;
+}
 
-  const response = await apiV1.get<MovieModel>(URL);
+export const getMovie = async ({ movieId, signal }: Props) => {
+  const URL = `${MOVIES_ENDPOINT}/${movieId}`;
+
+  const response = await apiV1.get<MovieModel>(URL, { signal });
   return response.data;
 };
