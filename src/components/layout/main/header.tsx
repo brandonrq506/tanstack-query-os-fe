@@ -1,10 +1,19 @@
+import { useDisclosure } from "@/hooks";
+
 import { BellIcon, UserIcon } from "@heroicons/react/24/outline";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { MovieSearchModal } from "@/features/movies/components";
 
 export const Header = () => {
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
   return (
     <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-      <form action="#" method="GET" className="grid flex-1 grid-cols-1">
+      <form
+        action="#"
+        method="GET"
+        className="grid flex-1 grid-cols-1"
+        onClick={onOpen}>
         <input
           name="search"
           type="search"
@@ -18,6 +27,7 @@ export const Header = () => {
           className="pointer-events-none col-start-1 row-start-1 size-5 self-center text-gray-400"
         />
       </form>
+      <MovieSearchModal isOpen={isOpen} onClose={onClose} />
       <div className="flex items-center gap-x-4 lg:gap-x-6">
         <button
           type="button"
