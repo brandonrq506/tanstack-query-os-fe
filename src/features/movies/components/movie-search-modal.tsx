@@ -96,8 +96,6 @@ export const MovieSearchModal = ({ isOpen, onClose }: Props) => {
         {notFound && (
           <div className="px-6 py-14 text-center text-sm sm:px-14">
             <MagnifyingGlassIcon
-              type="outline"
-              name="exclamation-circle"
               className="mx-auto size-6 text-gray-400"
             />
             <p className="mt-4 font-semibold text-gray-900">No movies found!</p>
