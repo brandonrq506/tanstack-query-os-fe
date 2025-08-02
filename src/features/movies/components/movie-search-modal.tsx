@@ -60,7 +60,6 @@ export const MovieSearchModal = ({ isOpen, onClose }: Props) => {
             className="col-start-1 row-start-1 h-12 w-full rounded-md pr-4 pl-11 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-1 focus:-outline-offset-1 focus:outline-indigo-600 sm:text-sm"
             placeholder="Search..."
             onChange={(event) => setQuery(event.target.value)}
-            onBlur={() => setQuery("")}
           />
           <MagnifyingGlassIcon
             className="pointer-events-none col-start-1 row-start-1 ml-4 size-5 self-center text-gray-400"
