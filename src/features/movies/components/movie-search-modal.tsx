@@ -14,6 +14,8 @@ import { MOVIES_ENDPOINT, apiV1 } from "@/libs/axios";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import type { MoviePreview } from "../types/movie-preview";
 import { useDebounce } from "@/hooks";
+import { useNavigate } from "react-router";
+import { usePrefetchMovie } from "../api/tanstack/usePrefetchMovie";
 
 interface Props {
   isOpen: boolean;
@@ -23,8 +25,11 @@ interface Props {
 const QUERY_MIN_LENGTH = 3;
 
 export const MovieSearchModal = ({ isOpen, onClose }: Props) => {
+  const navigate = useNavigate();
+  const prefetch = usePrefetchMovie();
+
   const [query, setQuery] = useState("");
-  const debouncedQuery = useDebounce(query);
+  const debouncedQuery = useDebounce(query.trim());
 
   const { data, isSuccess, isPlaceholderData } = useQuery({
     queryKey: [MOVIES_ENDPOINT, debouncedQuery],
@@ -44,6 +49,11 @@ export const MovieSearchModal = ({ isOpen, onClose }: Props) => {
     placeholderData: keepPreviousData,
   });
 
+  const handleClose = () => {
+    setQuery("");
+    onClose();
+  };
+
   const displayOptions =
     isSuccess && data.length > 0 && debouncedQuery.length >= QUERY_MIN_LENGTH;
 
@@ -51,8 +61,12 @@ export const MovieSearchModal = ({ isOpen, onClose }: Props) => {
     isSuccess && data.length === 0 && debouncedQuery.length >= QUERY_MIN_LENGTH;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <Combobox>
+    <Modal isOpen={isOpen} onClose={handleClose}>
+      <Combobox
+        onChange={(selectedMovie: MoviePreview) => {
+          handleClose();
+          navigate(`/movies/${selectedMovie.id}`);
+        }}>
         <div className="grid grid-cols-1">
           <ComboboxInput
             autoFocus
@@ -78,6 +92,8 @@ export const MovieSearchModal = ({ isOpen, onClose }: Props) => {
               <ComboboxOption
                 key={movie.id}
                 value={movie}
+                onFocus={() => prefetch(movie.id)}
+                onMouseEnter={() => prefetch(movie.id)}
                 className="group flex cursor-default items-center rounded-xl p-3 select-none data-focus:bg-gray-100 data-focus:outline-hidden">
                 <img
                   src={movie.thumbnail_url}
@@ -95,9 +111,7 @@ export const MovieSearchModal = ({ isOpen, onClose }: Props) => {
 
         {notFound && (
           <div className="px-6 py-14 text-center text-sm sm:px-14">
-            <MagnifyingGlassIcon
-              className="mx-auto size-6 text-gray-400"
-            />
+            <MagnifyingGlassIcon className="mx-auto size-6 text-gray-400" />
             <p className="mt-4 font-semibold text-gray-900">No movies found!</p>
             <p className="mt-2 text-gray-500">
               Try searching for a different title.
@@ -107,9 +121,7 @@ export const MovieSearchModal = ({ isOpen, onClose }: Props) => {
 
         {!notFound && !displayOptions && (
           <div className="px-6 py-14 text-center text-sm sm:px-14">
-            <MagnifyingGlassIcon
-              className="mx-auto size-6 text-gray-400"
-            />
+            <MagnifyingGlassIcon className="mx-auto size-6 text-gray-400" />
             <p className="mt-4 font-semibold text-gray-900">
               Search by Typing!
             </p>
