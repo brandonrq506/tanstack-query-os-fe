@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { MOVIES_ENDPOINT } from "@/libs/axios";
 import { getMovie } from "../axios/getMovie";
+import { movieKeyFactory } from "../movie-key-factory";
 
 export const useMovie = (movieId: number) => {
   return useQuery({
-    queryKey: [MOVIES_ENDPOINT, movieId],
+    queryKey: movieKeyFactory.detail(movieId),
     queryFn: ({ signal }) => getMovie({ signal, movieId }),
     enabled: Boolean(movieId),
   });
