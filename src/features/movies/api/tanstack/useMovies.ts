@@ -7,6 +7,6 @@ import { movieKeyFactory } from "../movie-key-factory";
 export const useMovies = ({ filter, sort }: MovieApiParams) => {
   return useQuery({
     queryKey: movieKeyFactory.list({ filter, sort }),
-    queryFn: ({ signal }) => getMovies({ signal }),
+    queryFn: getMovies,
   });
 };

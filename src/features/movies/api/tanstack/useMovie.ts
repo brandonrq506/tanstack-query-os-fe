@@ -6,7 +6,7 @@ import { movieKeyFactory } from "../movie-key-factory";
 export const useMovie = (movieId: number) => {
   return useQuery({
     queryKey: movieKeyFactory.detail(movieId),
-    queryFn: ({ signal }) => getMovie({ signal, movieId }),
+    queryFn: getMovie,
     enabled: Boolean(movieId),
   });
 };

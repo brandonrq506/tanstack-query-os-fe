@@ -1,3 +1,1 @@
-export interface SortOrder {
-  sort_order: "asc" | "desc";
-}
+export type SortOrder = "asc" | "desc";

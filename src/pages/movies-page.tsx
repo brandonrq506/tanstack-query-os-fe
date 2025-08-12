@@ -5,10 +5,7 @@ import { MovieCardLink } from "@/features/movies/components";
 import { PageHeader } from "@/components/layout";
 
 export const MoviesPage = () => {
-  const { isPending, isError, data } = useMovies({
-    filter: { genre_name: "Action", title: "kung fu panda" },
-    sort: {},
-  });
+  const { isPending, isError, data } = useMovies({});
 
   if (isPending) return <Loading sizeStyles="size-10" className="mx-auto" />;
 

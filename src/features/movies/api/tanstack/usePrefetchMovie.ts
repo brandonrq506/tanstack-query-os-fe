@@ -9,7 +9,7 @@ export const usePrefetchMovie = () => {
   const prefetch = (movieId: number) => {
     queryClient.prefetchQuery({
       queryKey: movieKeyFactory.detail(movieId),
-      queryFn: ({ signal }) => getMovie({ signal, movieId }),
+      queryFn: getMovie,
     });
   };
 
