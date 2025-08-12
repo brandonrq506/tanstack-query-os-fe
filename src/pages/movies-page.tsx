@@ -1,13 +1,10 @@
 import { useMovies } from "@/features/movies/api/tanstack/useMovies";
-import { usePrefetchMovie } from "@/features/movies/api/tanstack/usePrefetchMovie";
 
-import { Link } from "react-router";
 import { Loading } from "@/components/core";
-import { MovieCard } from "@/features/movies/components";
+import { MovieCardLink } from "@/features/movies/components";
 import { PageHeader } from "@/components/layout";
 
 export const MoviesPage = () => {
-  const prefetch = usePrefetchMovie();
   const { isPending, isError, data } = useMovies({
     filter: { genre_name: "Action", title: "kung fu panda" },
     sort: {},
@@ -30,12 +27,7 @@ export const MoviesPage = () => {
       <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {data.map((movie) => (
           <li key={movie.id}>
-            <Link
-              to={`/movies/${movie.id}`}
-              onFocus={() => prefetch(movie.id)}
-              onMouseEnter={() => prefetch(movie.id)}>
-              <MovieCard title={movie.title} imageUrl={movie.thumbnail_url} />
-            </Link>
+            <MovieCardLink movie={movie} />
           </li>
         ))}
       </ul>
