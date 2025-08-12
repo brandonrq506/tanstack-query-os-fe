@@ -10,12 +10,14 @@ import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Modal } from "@/components/core";
 import clsx from "clsx";
 
-import { MOVIES_ENDPOINT, apiV1 } from "@/libs/axios";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import type { MoviePreview } from "../types/movie-preview";
 import { useDebounce } from "@/hooks";
 import { useNavigate } from "react-router";
 import { usePrefetchMovie } from "../api/tanstack/usePrefetchMovie";
+
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import type { MoviePreview } from "../types/movie-preview";
+import { getMovies } from "../api/axios/getMovies";
+import { movieKeyFactory } from "../api/movie-key-factory";
 
 interface Props {
   isOpen: boolean;
@@ -31,20 +33,13 @@ export const MovieSearchModal = ({ isOpen, onClose }: Props) => {
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query.trim());
 
+  // useSearchMovies
   const { data, isSuccess, isPlaceholderData } = useQuery({
-    queryKey: [MOVIES_ENDPOINT, debouncedQuery],
-    queryFn: async ({ signal }) => {
-      const response = await apiV1.get<MoviePreview[]>(MOVIES_ENDPOINT, {
-        signal,
-        params: {
-          filter: {
-            title: debouncedQuery,
-          },
-          sort: { sort_by: "title", order: "asc" },
-        },
-      });
-      return response.data;
-    },
+    queryKey: movieKeyFactory.list({
+      filter: { title: debouncedQuery },
+      sort: { sort_by: "title", sort_order: "asc" },
+    }),
+    queryFn: getMovies,
     enabled: debouncedQuery.length >= QUERY_MIN_LENGTH,
     placeholderData: keepPreviousData,
   });
