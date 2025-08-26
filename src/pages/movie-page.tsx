@@ -1,6 +1,7 @@
 import { useMovie } from "@/features/movies/api/tanstack/useMovie";
 import { useParams } from "react-router";
 
+import { CommentList } from "@/features/comments/components";
 import { Loading } from "@/components/core";
 import { MovieDescription } from "@/features/movies/components";
 
@@ -33,16 +34,19 @@ export const MoviePage = () => {
     );
 
   return (
-    <div className="flex flex-col gap-4 xl:flex-row">
-      <div className="w-full flex-none xl:basis-3/4">
-        <img
-          src={movie.thumbnail_url}
-          alt={`${movie.title} thumbnail`}
-          className="aspect-video max-h-[500px] w-full rounded-md object-cover"
-        />
-      </div>
+    <div>
+      <div className="flex flex-col gap-4 xl:flex-row">
+        <div className="w-full flex-none xl:basis-3/4">
+          <img
+            src={movie.thumbnail_url}
+            alt={`${movie.title} thumbnail`}
+            className="aspect-video max-h-[500px] w-full rounded-md object-cover"
+          />
+        </div>
 
-      <MovieDescription movie={movie} />
+        <MovieDescription movie={movie} />
+      </div>
+      <CommentList movieId={movie.id} />
     </div>
   );
 };
