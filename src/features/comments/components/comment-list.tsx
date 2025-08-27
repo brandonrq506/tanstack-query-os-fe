@@ -19,7 +19,7 @@ export const CommentList = ({ movieId }: Props) => {
   return (
     <div>
       <SectionHeader title="Comments" className="mt-10" />
-      <CreateCommentForm />
+      <CreateCommentForm movieId={movieId} />
       <ul>
         {data.map((comment) => (
           <CommentCard key={comment.id} comment={comment} className="my-2" />

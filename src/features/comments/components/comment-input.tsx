@@ -3,28 +3,26 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/core";
 import { TextArea } from "@/components/form";
 
-interface CommentFormData {
-  body: string;
-}
+import { type CreateCommentFormType } from "../types/create-comment-form-type";
 
 interface Props {
-  initialValues: CommentFormData;
-  onSubmit: (data: CommentFormData) => void;
+  initialValues: CreateCommentFormType;
+  onSubmit: (data: CreateCommentFormType) => void;
 }
 
 export const CommentInput = ({ initialValues, onSubmit }: Props) => {
-  const { formState, handleSubmit, register, watch } = useForm<CommentFormData>(
-    {
+  const { formState, handleSubmit, register, reset } =
+    useForm<CreateCommentFormType>({
       values: initialValues,
-    },
-  );
-  const { isSubmitting, errors } = formState;
-
-  const watchedBody = watch("body");
-  const hasChanges = watchedBody !== initialValues.body;
+    });
+  const { isSubmitting, isDirty, errors } = formState;
 
   return (
-    <form onSubmit={handleSubmit((data) => onSubmit(data))}>
+    <form
+      onSubmit={handleSubmit((data) => {
+        onSubmit(data);
+        reset();
+      })}>
       <TextArea
         label="Write a comment"
         placeholder="Share your thoughts about this movie..."
@@ -38,7 +36,7 @@ export const CommentInput = ({ initialValues, onSubmit }: Props) => {
         <Button
           type="submit"
           variant="primary"
-          disabled={isSubmitting || !hasChanges}>
+          disabled={isSubmitting || !isDirty}>
           Post
         </Button>
       </div>

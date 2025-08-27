@@ -1,12 +1,15 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { useDeleteComment } from "../api/tanstack/use-delete-comment";
 
 interface Props {
   commentId: number;
 }
 
 export const DeleteComment = ({ commentId }: Props) => {
+  const { mutate } = useDeleteComment();
+
   const handleDelete = () => {
-    console.log("Deleting comment with ID:", commentId);
+    mutate(commentId);
   };
 
   return (
