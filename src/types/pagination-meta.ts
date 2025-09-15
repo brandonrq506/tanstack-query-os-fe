@@ -6,4 +6,3 @@ export type PaginationMeta = {
   next: number | null;
   prev: number | null;
 };
-
