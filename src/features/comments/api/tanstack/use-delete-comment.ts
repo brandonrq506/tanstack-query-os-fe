@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
 
-import { commentsByMovieOptions } from "../query-options/comments-by-movie-options";
 import { deleteComment } from "../axios/delete-comment";
+import { paginatedCommentsByMovieOptions } from "../query-options/paginated-comments-by-movie-options";
 
 export const useDeleteComment = () => {
   const queryClient = useQueryClient();
@@ -15,18 +15,46 @@ export const useDeleteComment = () => {
   return useMutation({
     mutationFn: deleteComment,
     onMutate: async (commentId) => {
-      // Cancel any outgoing refetches
-      await queryClient.cancelQueries(commentsByMovieOptions(movie_id));
+      const queryOptions = paginatedCommentsByMovieOptions({
+        movieId: movie_id,
+      });
 
-      const queryKey = commentsByMovieOptions(movie_id).queryKey;
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries(queryOptions);
+
+      // Our helper
+      const queryKey = queryOptions.queryKey;
 
       // Snapshot the previous value
       const prevComments = queryClient.getQueryData(queryKey);
 
       // Optimistically remove the comment
-      queryClient.setQueryData(queryKey, (old) => {
-        if (!old) return old;
-        return old.filter((c) => c.id !== commentId);
+      queryClient.setQueryData(queryKey, (oldData) => {
+        if (!oldData) return oldData;
+
+        let removed = false;
+
+        const pages = oldData.pages.map((page) => {
+          if (removed) return page;
+
+          const comments = page.comments.filter((c) => c.id !== commentId);
+
+          if (comments.length === page.comments.length) return page;
+
+          removed = true;
+
+          return {
+            ...page,
+            comments,
+          };
+        });
+
+        if (!removed) return oldData;
+
+        return {
+          ...oldData,
+          pages,
+        };
       });
 
       return { prevComments };
@@ -35,13 +63,15 @@ export const useDeleteComment = () => {
       // If the mutation fails, use the context returned from onMutate to roll back
       if (context?.prevComments) {
         queryClient.setQueryData(
-          commentsByMovieOptions(movie_id).queryKey,
+          paginatedCommentsByMovieOptions({ movieId: movie_id }).queryKey,
           context.prevComments,
         );
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries(commentsByMovieOptions(movie_id));
+      queryClient.invalidateQueries(
+        paginatedCommentsByMovieOptions({ movieId: movie_id }),
+      );
     },
   });
 };

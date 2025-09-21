@@ -1,25 +1,35 @@
-import { Fragment } from "react/jsx-runtime";
-import { usePaginatedCommentsByMovie } from "../api/tanstack/use-paginated-comments-by-movie";
+import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-import { Button, Loading } from "@/components/core";
 import { CommentCard } from "./comment-card";
 import { CreateCommentForm } from "./create-comment-form";
+import { Fragment } from "react/jsx-runtime";
+import { Loading } from "@/components/core";
 import { SectionHeader } from "@/components/layout";
+import { paginatedCommentsByMovieOptions } from "../api/query-options/paginated-comments-by-movie-options";
 
 type Props = {
   movieId: number;
 };
 
 export const CommentList = ({ movieId }: Props) => {
+  const { ref, inView } = useInView({ rootMargin: "500px 0px" });
+
   const {
     data,
     isPending,
     isError,
-    isFetching,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = usePaginatedCommentsByMovie({ movieId });
+  } = useInfiniteQuery(paginatedCommentsByMovieOptions({ movieId }));
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage, isFetchingNextPage]);
 
   if (isPending) return <Loading />;
 
@@ -49,16 +59,7 @@ export const CommentList = ({ movieId }: Props) => {
         })}
       </ul>
 
-      {hasNextPage && (
-        <div className="flex w-full">
-          <Button
-            className="mx-auto"
-            onClick={() => fetchNextPage()}
-            disabled={isFetching}>
-            {isFetchingNextPage ? "Loading more..." : "Load More"}
-          </Button>
-        </div>
-      )}
+      {!isFetchingNextPage && <div ref={ref}></div>}
     </div>
   );
 };
